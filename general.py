@@ -1,5 +1,3 @@
-import selection
-
 class Genetic_Algorithm:
     """ A Genetic Algorithm object which only needs to be given an initial
  population, a fitness function, a crossover function, and a mutation function.

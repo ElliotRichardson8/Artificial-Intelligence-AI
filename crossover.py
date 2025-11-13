@@ -3,10 +3,10 @@ from random import randint
 def sp_crossover(parent1, parent2):
     """Performs single-point crossover to produce 2 offspring.
 
-Assumes that the parents have equal length chromosomes"""
+Requires that the parents have equal length chromosomes"""
+
     if len(parent1) != len(parent2):
         raise ValueError("Parents must have equal length chromosomes")
-
 
     crossover_point = randint(0, len(parent1))
     offspring1 = parent1[0:i] + parent2[i:]

@@ -1,9 +1,22 @@
 import matplotlib
 import numpy as np
 
-# Declare constants
-segment_lengths = [] #TODO
+# Declare constants -----------------------------------------------------------
 
+# [coxa, femur, tibia]
+SEGMENT_LENGTHS = np.array([1.2, 0.7, 1.0])
+
+# Ellipse dimensions for body
+A = 1.5
+B = 1.0
+
+# Base angles
+BASE_ANGLES = np.deg2rad([45, 75, 105, 135, -135, -105, -75, -45])
+
+# Leg labels
+LEG_LABELS = ("L1", "L2", "L3", "L4", "R4", "R3", "R2", "R1")
+
+# Main function ---------------------------------------------------------------
 def plot_spider_pose(angles):
     """Plot a static 3D spider pose based on joint angles
 
@@ -17,6 +30,7 @@ def plot_spider_pose(angles):
     Angle 2 is the pitch of the femur
     Angle 3 is the pitch of the tibia
 
-    The first leg is L0 (front left), then legs go clockwise around the body
+    The first leg is L0 (front left), then legs go anticlockwise around the body
     until R0 (front right)
     """
+    # Important to remember that "left" is the spider's left, not the observer's left

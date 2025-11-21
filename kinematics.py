@@ -21,30 +21,21 @@ Z_AXIS = np.array([0, 0, 1])
 
 # -----------------------------------------------------------------------------
 
-def get_base_position(base_angle):
-    """Returns the position of a leg-base given its angle round the body"""
-    x_base = A * np.cos(base_angle)
-    y_base = B * np.sin(base_angle)
-    return np.array([x_base, y_base, 0])
-
-def calculate_joint_positions(
-    base_pos,
-    base_angle,
-    joint_angles,
-    segment_lengths
-    ):
+def calculate_joint_positions(leg_index, joint_angles):
     """Returns joint positions
 
-    base_position
-        [x, y, z] position of leg base on body
-    base_angle
-        angle around body ellipse where leg base is located (radians)
+    leg_index
+        index of the leg from 0 to N_LEGS-1
     joint_angles
         [coxa_yaw, femur_pitch, tibia_pitch] joint angles for the leg in radians
-    segment_lengths
-        [coxa, femur, tibia]
     """
     # TODO validate input maybe
+
+    base_angle = BASE_ANGLES[leg_index]
+    
+    x_base = A * np.cos(base_angle)
+    y_base = B * np.sin(base_angle)
+    base_pos = np.array([x_base, y_base, 0])
 
     # Initialise array of joint positions.
     # Initially only includes where the coxa meets the body
@@ -68,7 +59,7 @@ def calculate_joint_positions(
     for i in range(3):
         rot_axis = np.cross(direction, Z_AXIS)
         direction = rotate_vector(direction, rot_axis, joint_angles[i])
-        joints.append(joints[i] + direction * segment_lengths[i])
+        joints.append(joints[i] + direction * SEGMENT_LENGTHS[i])
 
     return joints
 

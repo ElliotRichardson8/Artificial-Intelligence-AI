@@ -1,9 +1,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from kinematics import *
+import kinematics
 
 # Declare constants -----------------------------------------------------------
+
+N_LEGS = kinematics.N_LEGS
+N_SEGMENTS = kinematics.N_SEGMENTS
 
 LEG_LABELS = ("L1", "L2", "L3", "L4", "R4", "R3", "R2", "R1")
 assert len(LEG_LABELS) == N_LEGS
@@ -39,15 +42,7 @@ def plot_spider_pose(angles):
     ax = fig.add_subplot(projection="3d")
 
     for i in range(N_LEGS):
-        base_angle = BASE_ANGLES[i]
-        base_pos = get_base_position(base_angle)
-
-        joints = calculate_joint_positions(
-            base_pos,
-            base_angle,
-            angles[i*3:i*3+3],
-            SEGMENT_LENGTHS
-        )
+        joints = kinematics.calculate_joint_positions(i, angles[i*3:i*3+3])
 
         # Plot legs -----------------------------------------------------------
 
@@ -69,12 +64,12 @@ def plot_spider_pose(angles):
         
     # Create body. Idk how to fill it in
     t = np.linspace(0, 2*np.pi, 100)
-    body_x = A * np.cos(t)
-    body_y = B * np.sin(t)
+    body_x = kinematics.A * np.cos(t)
+    body_y = kinematics.B * np.sin(t)
     ax.plot(body_x, body_y, np.zeros(np.size(t)), "k-") # black line
 
     # Add "head" marker to spider
-    ax.plot(A + 0.2, 0, 0, "rs") # red dot
+    ax.plot(kinematics.A + 0.2, 0, 0, "rs") # red dot
 
     # Add axis labels
     ax.set_xlabel("X")
@@ -89,3 +84,5 @@ def plot_spider_pose(angles):
 
     ax.set_aspect("equal")
     plt.show()
+
+plot_spider_pose(np.ones(24))

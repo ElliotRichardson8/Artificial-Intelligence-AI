@@ -1,8 +1,31 @@
 import numpy as np
 
+# Declare constants -----------------------------------------------------------
+
+N_LEGS = 8
+
+# [coxa, femur, tibia]
+SEGMENT_LENGTHS = np.array([1.2, 0.7, 1.0])
+N_SEGMENTS = len(SEGMENT_LENGTHS)
+
+# Ellipse dimensions for body
+A = 1.5
+B = 1.0
+
+BASE_ANGLES = np.deg2rad([45, 75, 105, 135, -135, -105, -75, -45])
+assert len(BASE_ANGLES) == N_LEGS
+
 # Angle between coxa and XY plane
 COXA_PITCH = np.deg2rad(30)
 Z_AXIS = np.array([0, 0, 1])
+
+# -----------------------------------------------------------------------------
+
+def get_base_position(base_angle):
+    """Returns the position of a leg-base given its angle round the body"""
+    x_base = A * np.cos(base_angle)
+    y_base = B * np.sin(base_angle)
+    return np.array([x_base, y_base, 0])
 
 def calculate_joint_positions(
     base_pos,
@@ -78,6 +101,7 @@ def axis_angle_rotation_matrix(axis, angle):
     return r
 
 def rotate_vector(vector, axis, angle):
+    """Rotates a vector about the given axis by the given angle"""
     rotation_matrix = axis_angle_rotation_matrix(axis, angle)
     # Perform matrix multiplication (using the * operator results in broadcasting)
     return np.matmul(rotation_matrix, vector)

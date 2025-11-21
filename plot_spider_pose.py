@@ -1,22 +1,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-import forward_kinematics
+from kinematics import *
 
 # Declare constants -----------------------------------------------------------
 
-N_LEGS = 8
-
-# [coxa, femur, tibia]
-SEGMENT_LENGTHS = np.array([1.2, 0.7, 1.0])
-N_SEGMENTS = len(SEGMENT_LENGTHS)
-
-# Ellipse dimensions for body
-A = 1.5
-B = 1.0
-
-BASE_ANGLES = np.deg2rad([45, 75, 105, 135, -135, -105, -75, -45])
 LEG_LABELS = ("L1", "L2", "L3", "L4", "R4", "R3", "R2", "R1")
+assert len(LEG_LABELS) == N_LEGS
 
 # Main function ---------------------------------------------------------------
 def plot_spider_pose(angles):
@@ -49,22 +39,13 @@ def plot_spider_pose(angles):
     ax = fig.add_subplot(projection="3d")
 
     for i in range(N_LEGS):
-
-        # "angles" is 24x1. We need to extract 3 angles at a time
-        idx = i*3
-        theta1 = angles[idx]
-        theta2 = angles[idx+1]
-        theta3 = angles[idx+2]
-
         base_angle = BASE_ANGLES[i]
-        x_base = A * np.cos(base_angle)
-        y_base = B * np.sin(base_angle)
-        base_pos = np.array([x_base, y_base, 0])
+        base_pos = get_base_position(base_angle)
 
-        joints = forward_kinematics.calculate_joint_positions(
+        joints = calculate_joint_positions(
             base_pos,
             base_angle,
-            (theta1, theta2, theta3),
+            angles[i*3:i*3+3],
             SEGMENT_LENGTHS
         )
 

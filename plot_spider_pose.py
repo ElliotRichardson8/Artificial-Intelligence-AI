@@ -80,6 +80,10 @@ def plot_spider_pose(angles):
         ax.plot(jx[1:3], jy[1:3], jz[1:3], "b-") # femur; blue line
         ax.plot(jx[2:], jy[2:], jz[2:], "r-") # tibia; red line
         ax.plot(jx[3], jy[3], jz[3], "ro", markersize=5) # foot; red circle
+
+        # Plot leg labels ---------
+
+        ax.text(jx[0], jy[0], jz[0], LEG_LABELS[i], fontweight="bold")
     
         
     # Create body. Idk how to fill it in
@@ -89,7 +93,7 @@ def plot_spider_pose(angles):
     ax.plot(body_x, body_y, np.zeros(np.size(t)), "k-") # black line
 
     # Add "head" marker to spider
-    ax.plot(A + 0.2, 0, 0, "r.") # red dot
+    ax.plot(A + 0.2, 0, 0, "rs") # red dot
 
     # Add axis labels
     ax.set_xlabel("X")
@@ -101,6 +105,8 @@ def plot_spider_pose(angles):
     ax.set_zbound(-2, 2)
     # Set camera position
     ax.view_init(45, -45)
+
+    ax.set_aspect("equal")
     plt.show()
 
 

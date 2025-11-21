@@ -35,6 +35,12 @@ def calculate_joint_positions(
         0 # Zero corresponds to no Z direction
         ])
 
+    # In the subsequent loop we treat each joint angle as the pitch
+    # So we need to write the coxa pitch to the first joint_angle
+    # To do that we need to make joint_angles writeable i.e. a list
+    joint_angles = list(joint_angles)
+    joint_angles[0] = COXA_PITCH
+
     # Main loop
     for i in range(3):
         rot_axis = np.cross(direction, Z_AXIS)
@@ -73,4 +79,5 @@ def axis_angle_rotation_matrix(axis, angle):
 
 def rotate_vector(vector, axis, angle):
     rotation_matrix = axis_angle_rotation_matrix(axis, angle)
+    # Perform matrix multiplication (using the * operator results in broadcasting)
     return np.matmul(rotation_matrix, vector)

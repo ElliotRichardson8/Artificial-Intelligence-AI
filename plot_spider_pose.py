@@ -108,6 +108,3 @@ def plot_spider_pose(angles):
 
     ax.set_aspect("equal")
     plt.show()
-
-
-plot_spider_pose(np.ones(24))

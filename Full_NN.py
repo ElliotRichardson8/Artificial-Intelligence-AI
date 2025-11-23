@@ -5,7 +5,9 @@ class Full_NN(object):
     def __init__(self, X=2, HL=[2,2], Y=2):
         self.X=X #inputs
         self.HL=HL #hidden layers
-        self.Y=Y
+        self.Y=Y #outputs
+        self.activation = self.relu
+        self.activation_Der = self.relu_Der
 
         L=[X]+HL+[Y] #total number of layers
 
@@ -32,14 +34,14 @@ class Full_NN(object):
         self.out[0] = x
         for x, w in enumerate(self.W):
             Xnext = np.dot(out, w)
-            out=self.sigmoid(Xnext)
+            out=self.activation(Xnext)
             self.out[x+1]=out
         return out
     
-    def BP(self, Er): #back propagation method
+    def BP(self, Er): #backpropagation method
         for x in reversed (range(len(self.Der))):
             out = self.out[x+1]
-            D = Er*self.sigmoid_Der(out)
+            D = Er*self.activation_Der(out)
             D_fixed = D.reshape(D.shape[0],-1)
             this_out = self.out[x]
             this_out = this_out.reshape(this_out.shape[0],-1)
@@ -71,6 +73,18 @@ class Full_NN(object):
         sig_der = x * (1.0 - x)
         return sig_der
     
+    def relu(self, x): #reLU activation method
+        return np.maximum(0,x)
+    
+    def relu_Der(self, x): #reLU derivative method
+        return (x > 0).astype(float)
+    
+    def tanh(self, x): #tanh activation method
+        return 2 * self.sigmoid(2 * x) - 1
+    
+    def tanh_Der(self, x): #tanh derivative method
+        return 1 - self.tanh(x) ** 2
+
     def msqe(self, t, output): #mean square error
         msq = np.average((t-output) ** 2)
         return msq

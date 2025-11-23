@@ -39,22 +39,21 @@ class Full_NN(object):
         return out
     
     def BP(self, Er): #backpropagation method
-        for x in reversed (range(len(self.Der))):
+        for x in reversed(range(len(self.Der))):
             out = self.out[x+1]
-            D = Er*self.activation_Der(out)
-            D_fixed = D.reshape(D.shape[0],-1)
+            D = Er * self.activation_Der(out)
+            # compute weight derivatives as outer product of previous layer outputs and deltas
             this_out = self.out[x]
-            this_out = this_out.reshape(this_out.shape[0],-1)
-            self.Der[x]=np.dot(this_out, D_fixed)
-            Er=np.dot(D, self.W[x].T)
+            self.Der[x] = np.outer(this_out, D)
+            Er = np.dot(D, self.W[x].T)
 
     def train_nn(self, x, target, epochs, lr): #training method
-        for x in range(epochs):
+        for epoch in range(epochs):
             S_errors = 0
-            for j, input in enumerate(x):
+            for j, sample in enumerate(x):
                 t = target[j]
-                output = self.FF(input)
-                e = t-output
+                output = self.FF(sample)
+                e = t - output
                 self.BP(e)
                 self.GD(lr)
                 S_errors += self.msqe(t, output)
@@ -63,7 +62,7 @@ class Full_NN(object):
         for x in range(len(self.W)):
             W = self.W[x]
             Der = self.Der[x]
-            W += Der*lr
+            W += Der * lr
 
     def sigmoid(self, x): #sigmoid activation method
         y= 1.0 / (1 + np.exp(-x))
@@ -90,3 +89,26 @@ class Full_NN(object):
         return msq
     
 
+#test
+if __name__ == "__main__": #test what we have done
+    training_inputs = np.array([[random()/2 for _ in range(2)] for _ in range(1000)]) #this creates a training set of inputs
+    targets = np.array([[i[0] * i[1]] for i in training_inputs]) #this creates a training set of outputs
+
+    nn=Full_NN(2, [5,5], 1) #creates a NN with 2 inputs, 2 hidden layers and 1 output
+
+    nn.train_nn(training_inputs, targets, 10, 0.1) #trains the network with 0.1 learning rate for 10 epochs
+
+    #Testing data to identify if Network trained well
+    input = np.array([0.3, 0.2]) #after training this tests the train network
+    target = np.array([0.06]) # for this target value
+
+    NN_output = nn.FF(input)
+
+    print("=============== Testing the Network Screen Output ===============")
+    print ("Test input is ", input)
+    print()
+    print("Target output is ",target)
+    print()
+    print("Neural Network actual output is ",NN_output, "there is an error (not MSQE) of ",target-NN_output)
+
+print("=================================================================")

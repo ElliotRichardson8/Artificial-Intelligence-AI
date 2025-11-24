@@ -1,14 +1,19 @@
 import random
 
-def random_resetting_mutation(chromo, mutationRate, lower, upper):
+def random_resetting_mutation(chromo, mutation_rate=0.01, lower=0, upper=1):
     """
-    Peforms randon resetting mutation on a floating-point chromosome
+    Peforms random resetting mutation on a floating-point chromosome
     """
-    for x in range(len(chromo)):
-        if random.random() < mutationRate:
+    for i in range(len(chromo)):
+        if random.random() < mutation_rate:
             #replace gene with random number from boundaries
-            chromo[x] = random.uniform(lower,upper)
+            chromo[i] = random.uniform(lower, upper)
+
     return chromo
+
+def mutate_population(population, mutation_rate=0.01, lower=0.1, upper=1):
+    for i in range(len(population)):
+        population[i] = random_resetting_mutation(population[i])
 
 #test mutation
 def test():

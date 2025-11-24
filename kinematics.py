@@ -15,6 +15,10 @@ B = 1.0
 BASE_ANGLES = np.deg2rad([45, 75, 105, 135, -135, -105, -75, -45])
 assert len(BASE_ANGLES) == N_LEGS
 
+# Pre-calculate base positions because they don't change
+BASE_POSITIONS = [(A * np.cos(angle), B * np.sin(angle), 0)
+                  for angle in BASE_ANGLES]
+
 # Angle between coxa and XY plane
 COXA_PITCH = np.deg2rad(30)
 Z_AXIS = np.array([0, 0, 1])
@@ -32,10 +36,7 @@ def calculate_joint_positions(leg_index, joint_angles):
     # TODO validate input maybe
 
     base_angle = BASE_ANGLES[leg_index]
-    
-    x_base = A * np.cos(base_angle)
-    y_base = B * np.sin(base_angle)
-    base_pos = np.array([x_base, y_base, 0])
+    base_pos = BASE_POSITIONS[leg_index]
 
     # Initialise array of joint positions.
     # Initially only includes where the coxa meets the body

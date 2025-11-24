@@ -3,8 +3,10 @@ class Genetic_Algorithm:
  population, a fitness function, a crossover function, and a mutation function.
  
  Assumes that the fitness function considers each individual in isolation.
+
  Assumes that the selection, crossover and mutation functions operate over an 
  entire population.
+
  Assumes that the crossover function produces a population of equal size.""" 
     def __init__(self,
         initial_population,
@@ -47,3 +49,16 @@ class Genetic_Algorithm:
         """Performs n generations"""
         for i in range(n):
             self.perform_generation
+
+    def fittest_individual(self):
+        fittest_individual = self.population[0]
+        fittest_fitness = self.evaluate_fitness(population[0])
+
+        for individual in self.population:
+            new_fitness = self.evaluate_fitness(individual)
+            if new_fitness > fittest_fitness:
+                fittest_fitness = new_fitness
+                fittest_individual = individual
+
+        return fittest_individual
+        

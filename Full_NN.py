@@ -1,5 +1,6 @@
 import numpy as np
 from random import random
+import matplotlib.pyplot as plt
 
 class Full_NN(object):
     def __init__(self, X, HL, Y):
@@ -48,6 +49,7 @@ class Full_NN(object):
             Er = np.dot(D, self.W[x].T)
 
     def train_nn(self, x, target, epochs, lr): #training method
+        losses = []
         for epoch in range(epochs):
             S_errors = 0
             for j, sample in enumerate(x):
@@ -57,6 +59,9 @@ class Full_NN(object):
                 self.BP(e)
                 self.GD(lr)
                 S_errors += self.msqe(t, output)
+            avg_loss = S_errors / len(x)
+            losses.append(avg_loss)
+        return losses
 
     def GD(self, lr=0.05): #gradient descent, change lr later
         for x in range(len(self.W)):
@@ -90,7 +95,6 @@ class Full_NN(object):
     
 
 #Generate Training Data
-
 samples = 500
 
 t = np.linspace(0, 1, samples).reshape(-1, 1)
@@ -101,14 +105,19 @@ for x in range(24):
     Y[:, x] = np.sin(2 * np.pi * t[:, 0] + phase)
 
 #creating and training the neural network
-
 nn = Full_NN(1, [32], 24)
 
 losses = nn.train_nn(t, Y, 2000, 0.01)
 
+#plot training loss
+plt.plot(losses)
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.title("Training Loss Curve")
+plt.show()
+
 
 #model test
-
 test_t = np.array([0.5])
 prediction = nn.FF(test_t)
 print("Predicted 24 joint angles:", prediction)

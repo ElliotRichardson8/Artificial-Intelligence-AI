@@ -111,7 +111,7 @@ for x in range(24):
 #creating and training the neural network
 nn = Full_NN(1, [32], 24)
 
-losses = nn.train_nn(t, Y, 2000, 0.01)
+losses = nn.train_nn(t, Y, 2000, 0.02)
 
 #plot training loss
 plt.plot(losses)
@@ -132,8 +132,6 @@ for t in [0.0, 0.25, 0.5, 0.75, 1.0]:
     plt.ylabel("Angle")
     plt.legend()
     plt.show()
-
-    pt.plot_spider_pose(pred)
 
 
 #model test

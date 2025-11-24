@@ -67,7 +67,7 @@ class Full_NN(object):
                 print(f"Epoch {epoch}, Loss: {avg_loss}")
         return losses
 
-    def GD(self, lr=0.05): #gradient descent, change lr later
+    def GD(self, lr): #gradient descent
         for x in range(len(self.W)):
             W = self.W[x]
             Der = self.Der[x]
@@ -88,10 +88,10 @@ class Full_NN(object):
         return (x > 0).astype(float)
     
     def tanh(self, x): #tanh activation method
-        return 2 * self.sigmoid(2 * x) - 1
+        return np.tanh(x)
     
-    def tanh_Der(self, x): #tanh derivative method
-        return 1 - self.tanh(x) ** 2
+    def tanh_Der(self, out): #tanh derivative method
+        return 1 - out ** 2
 
     def msqe(self, t, output): #mean square error (loss function)
         msq = np.average((t-output) ** 2)

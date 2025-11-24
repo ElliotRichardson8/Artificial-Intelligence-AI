@@ -1,6 +1,7 @@
 import numpy as np
 from random import random
 import matplotlib.pyplot as plt
+import plot_spider_pose as pt
 
 class Full_NN(object):
     def __init__(self, X, HL, Y):
@@ -61,6 +62,9 @@ class Full_NN(object):
                 S_errors += self.msqe(t, output)
             avg_loss = S_errors / len(x)
             losses.append(avg_loss)
+
+            if epoch % 100 == 0:
+                print(f"Epoch {epoch}, Loss: {avg_loss}")
         return losses
 
     def GD(self, lr=0.05): #gradient descent, change lr later
@@ -89,12 +93,12 @@ class Full_NN(object):
     def tanh_Der(self, x): #tanh derivative method
         return 1 - self.tanh(x) ** 2
 
-    def msqe(self, t, output): #mean square error
+    def msqe(self, t, output): #mean square error (loss function)
         msq = np.average((t-output) ** 2)
         return msq
     
 
-#Generate Training Data
+#Generate Training Data (sinusoidal gait)
 samples = 500
 
 t = np.linspace(0, 1, samples).reshape(-1, 1)
@@ -121,3 +125,4 @@ plt.show()
 test_t = np.array([0.5])
 prediction = nn.FF(test_t)
 print("Predicted 24 joint angles:", prediction)
+pt.plot_spider_pose(prediction)

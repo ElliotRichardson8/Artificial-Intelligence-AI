@@ -1,0 +1,10 @@
+-------- Neural Network Architecture --------
+
+
+-------- Activation Functions and Loss Functions --------
+
+
+-------- Training Method & Learning Rate --------
+
+
+-------- Input/Output Format --------

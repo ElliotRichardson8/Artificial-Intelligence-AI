@@ -120,6 +120,33 @@ plt.ylabel("Loss")
 plt.title("Training Loss Curve")
 plt.show()
 
+# Compare predicted outputs vs target configurations
+test_times = np.linspace(0, 1, 5)  # 5 sample time points
+
+for ti in test_times:
+    # Predict joint angles
+    pred = nn.FF(np.array([ti]))
+    
+    # Compute true joint angles
+    true = np.array([np.sin(2 * np.pi * ti + x * np.pi / 8) for x in range(24)])
+    
+    # Print comparison
+    print(f"t = {ti:.2f}")
+    print("Predicted:", np.round(pred, 3))
+    print("Target:   ", np.round(true, 3), "\n")
+    
+    # Plot comparison
+    plt.figure(figsize=(10, 4))
+    plt.plot(true, label="Target")
+    plt.plot(pred, '--', label="Predicted")
+    plt.title(f"Predicted vs Target Joint Angles at t={ti:.2f}")
+    plt.xlabel("Joint Index")
+    plt.ylabel("Angle")
+    plt.legend()
+    plt.show()
+    
+    # Plot spider pose for this prediction
+    pt.plot_spider_pose(pred)
 
 #model test
 test_t = np.array([0.5])

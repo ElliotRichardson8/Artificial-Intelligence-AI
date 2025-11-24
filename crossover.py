@@ -1,4 +1,5 @@
 from random import randint
+import numpy as np
 
 def sp_crossover(parent1, parent2):
     """Performs single-point crossover to produce 2 offspring.
@@ -9,8 +10,8 @@ Requires that the parents have equal length chromosomes"""
         raise ValueError("Parents must have equal length chromosomes")
 
     crossover_point = randint(0, len(parent1))
-    offspring1 = parent1[0:i] + parent2[i:]
-    offspring2 = parent2[0:i] + parent1[i:]
+    offspring1 = np.concatenate((parent1[0:crossover_point], parent2[crossover_point:]))
+    offspring2 = np.concatenate((parent2[0:crossover_point], parent1[crossover_point:]))
 
     return [offspring1, offspring2]
     

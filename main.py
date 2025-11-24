@@ -1,43 +1,54 @@
-import crossover, fitness, general, initial, mutation, selection
+import crossover, fitness, initial, mutation, selection
 import forward_kinematics, plot_spider_pose
 import numpy as np
+import pygad
 
-def plot_spider_from_chromosome(chromosome):
-    leg_bases = general.get_leg_bases()
-    segment_lengths = general.get_segment_lengths()
-    all_joints = []
-    for leg in range(6):
-        base_pos = leg_bases[leg]
-        base_angle = general.get_leg_base_angle(leg)
-        joint_angles = chromosome[leg*3:(leg+1)*3]
-        joints = forward_kinematics.calculate_joint_positions(
-            base_pos,
-            base_angle,
-            joint_angles,
-            segment_lengths
-        )
-        all_joints.append(joints)
-    plot_spider_pose.plot_spider(all_joints)
+# input 1x24 list of angles in radians
+def plot_spider_from_angles(angles):
+    plot_spider_pose.plot_spider_pose(np.array(angles))
+
 
 def main():
     populations = []; # 300 1x24 lists at the end
-    fitness_scores = []; # lists at the end
+    all_fitness_scores = []; # lists at the end
+    parent_amount = 10 # number of parents to select from each generation
     
-    for generation in range(300):
-        population = initial.generate_chromosome(initial.joint_limits)
-        fitness_score = fitness.evaluate_population_fitness(population)
-        selected_parents = selection.select_parents(population, fitness_score)
-        offspring = crossover.perform_crossover(selected_parents, 12)
+    plot_spider_from_angles([0.1, 0.2, -0.1, 0.3, -0.2, 0.1, -0.1, 0.4, -0.3, 0.2, 0.1, -0.2, -0.3, 0.2, 0.1, 0.4, -0.1, -0.2, 0.3, -0.4, 0.2, 0.1, -0.3, 0.2])
+
+    '''generate 300 populations for 300 generations
+    each population has 24 chromosomes
+    after each generation evaluate fitness of populations
+    select 10 parents using roulette wheel selection
+    perform crossover to produce 10 offspring
+    mutate offspring using random resetting mutation with mutation rate of 0.1
+    create new population with parents and mutated offspring
+    '''
+
+    # create initial population
+    population = initial.initial_population(20, initial.joint_limits)
+    for generation in range(200):
+        populations.append(population)
+        gen_fitness_scores = []
+        for pop in range(len(population)):
+            fitness_score = fitness.evaluate_population_fitness(population[pop], population[pop-1])
+            gen_fitness_scores.append(fitness_score)
+        print(f"Generation {generation} Population {len(population)} \nFitness: {gen_fitness_scores}")
+
+        all_fitness_scores.append(gen_fitness_scores)
+        fitest_indivuals = selection.tournament_selection_population(population, gen_fitness_scores, 2)
+        plot_spider_from_angles(fitest_indivuals[0])
+        
+        selected_parents = selection.tournament_selection_population(population, gen_fitness_scores, parent_amount) # get 10 fitest parents
+        population = [] # reset population
+        for i in range(int(parent_amount/2)):
+            offspring = crossover.sp_crossover(selected_parents[i], selected_parents[i*2])
         mutated_offspring = []
         for child in offspring:
             mutated_child = mutation.random_resetting_mutation(child, 0.1, -np.pi/2, np.pi/2)
-            mutated_offspring.append(mutated_child)
-        population = selected_parents + mutated_offspring
-        populations.append(population)
-        fitness_scores.append(fitness.evaluate_population_fitness(population))
-        plot_spider_from_chromosome(population[generation])
+            population.append(mutated_child)
+        #population = selected_parents + mutated_offspring
 
 
-#main()
+main()
 
-plot_spider_from_chromosome([0.1, 0.2, -0.1, 0.3, -0.2, 0.1, -0.1, 0.4, -0.3, 0.2, 0.1, -0.2, -0.3, 0.2, 0.1, 0.4, -0.1, -0.2, 0.3, -0.4, 0.2, 0.1, -0.3, 0.2])    
+plot_spider_from_angles([0.1, 0.2, -0.1, 0.3, -0.2, 0.1, -0.1, 0.4, -0.3, 0.2, 0.1, -0.2, -0.3, 0.2, 0.1, 0.4, -0.1, -0.2, 0.3, -0.4, 0.2, 0.1, -0.3, 0.2])    

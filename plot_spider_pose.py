@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 import numpy as np
 
 import forward_kinematics
@@ -17,6 +18,10 @@ B = 1.0
 
 BASE_ANGLES = np.deg2rad([45, 75, 105, 135, -135, -105, -75, -45])
 LEG_LABELS = ("L1", "L2", "L3", "L4", "R4", "R3", "R2", "R1")
+frames = []
+leg_frames = []
+fig = plt.figure()
+
 
 # Main function ---------------------------------------------------------------
 def plot_spider_pose(angles):
@@ -32,19 +37,18 @@ def plot_spider_pose(angles):
     Angle 2 is the pitch of the femur
     Angle 3 is the pitch of the tibia
 
-    The first leg is L0 (front left), then legs go anticlockwise around the body
-    until R0 (front right)
+    The first leg is L1 (front left), then legs go anticlockwise around the body
+    until R1 (front right)
     """
     # "left" is the spider's left, not the observer's left
 
     # Validate input
     if angles.size != N_LEGS * N_SEGMENTS:
+        print("angles.size", angles.size, "\nangles:", angles)
         raise ValueError(
-            f"Input angles must be a 1x{len(N_LEGS)*N_SEGMENTS} vector."
+            f"Input angles must be a 1x{N_LEGS*N_SEGMENTS} vector."
             f"({N_SEGMENTS} angles per leg for {N_LEGS} legs.)")
 
-    # Create figure
-    fig = plt.figure()
     # Add 3 dimensional axes
     ax = fig.add_subplot(projection="3d")
 
@@ -84,6 +88,8 @@ def plot_spider_pose(angles):
         # Plot leg labels ---------
 
         ax.text(jx[0], jy[0], jz[0], LEG_LABELS[i], fontweight="bold")
+
+        leg_frames.append(ax)
     
         
     # Create body. Idk how to fill it in
@@ -107,4 +113,20 @@ def plot_spider_pose(angles):
     ax.view_init(45, -45)
 
     ax.set_aspect("equal")
+    frames.append(ax)
+
+    plt.show()
+
+def update(frames):
+        ax.cla()  # Clear the axes
+        for frame in frames:
+            ax = frame.gca(projection='3d')
+            for line in ax.get_lines():
+                ax.add_line(line)   
+
+def show_spider_animation():
+    """Displays an animation of the spider moving through the recorded frames."""
+    from matplotlib.animation import FuncAnimation
+
+    ani = animation.FuncAnimation(fig, update, frames=frames, interval=200)
     plt.show()

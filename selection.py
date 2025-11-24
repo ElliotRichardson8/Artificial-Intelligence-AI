@@ -27,17 +27,16 @@ def tournament_selection_individual(population, fitnesses, x=2):
         raise ValueError(f"Value for x must be greater than 1\n Received {x}")
 
     # Select indexes corresponding to x different individuals
-    candidates = [random.randint(len(population)) for i in range(x)]
-
-    fittest_candidate = 0
+    candidates = random.sample(range(0,len(population)),len(population))
+    fitest_candidate = 0
     greatest_fitness = fitnesses[0]
 
     for candidate in candidates:
-        if fitnesses[candidates] > greatest_fitness:
-            greatest_fitness = fittnesses(candidate)
-            fittest_candidate = candidate
+        if fitnesses[candidate] > greatest_fitness:
+            greatest_fitness = fitnesses[candidate]
+            fitest_candidate = candidate
 
-    return population[fittest_index]
+    return population[fitest_candidate]
 
 # TODO test this
 def tournament_selection_population(population, fitnesses: [int], n: int, x=2):

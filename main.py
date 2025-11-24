@@ -20,8 +20,8 @@ def plot_spider_from_chromosome(chromosome):
     plot_spider_pose.plot_spider(all_joints)
 
 def main():
-    populations = []; # 300 24x1 lists at the end
-    fitness_scores = []; # 24x1 lists at the end
+    populations = []; # 300 1x24 lists at the end
+    fitness_scores = []; # lists at the end
     
     for generation in range(300):
         population = initial.generate_chromosome(initial.joint_limits)
@@ -38,4 +38,6 @@ def main():
         plot_spider_from_chromosome(population[generation])
 
 
-main()
+#main()
+
+plot_spider_from_chromosome([0.1, 0.2, -0.1, 0.3, -0.2, 0.1, -0.1, 0.4, -0.3, 0.2, 0.1, -0.2, -0.3, 0.2, 0.1, 0.4, -0.1, -0.2, 0.3, -0.4, 0.2, 0.1, -0.3, 0.2])    

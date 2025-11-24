@@ -6,8 +6,8 @@ class Full_NN(object):
         self.X=X #inputs
         self.HL=HL #hidden layers
         self.Y=Y #outputs
-        self.activation = self.relu
-        self.activation_Der = self.relu_Der
+        self.activation = self.tanh
+        self.activation_Der = self.tanh_Der
 
         L=[X]+HL+[Y] #total number of layers
 
@@ -89,27 +89,26 @@ class Full_NN(object):
         return msq
     
 
-#test
-def main():
-    training_inputs = np.array([[random()/2 for _ in range(2)] for _ in range(1000)]) 
-    targets = np.array([[i[0] * i[1]] for i in training_inputs]) 
+#Generate Training Data
 
-    nn=Full_NN(2, [5,5], 1) 
+samples = 500
 
-    nn.train_nn(training_inputs, targets, 10, 0.1) 
+t = np.linspace(0, 1, samples).reshape(-1, 1)
 
-    #Testing data to identify if Network trained well
-    input = np.array([0.3, 0.2]) 
-    target = np.array([0.06]) 
+Y=np.zeros((samples, 24))
+for x in range(24):
+    phase = x * (np.pi/8)
+    Y[:, x] = np.sin(2 * np.pi * t[:, 0] + phase)
 
-    NN_output = nn.FF(input)
+#creating and training the neural network
 
-    print("=============== Testing the Network Screen Output ===============")
-    print ("Test input is ", input)
-    print()
-    print("Target output is ",target)
-    print()
-    print("Neural Network actual output is ",NN_output, "there is an error (not MSQE) of ",target-NN_output)
-    print("=================================================================")
+nn = Full_NN(1, [32], 24)
 
-main()
+losses = nn.train_nn(t, Y, 2000, 0.01)
+
+
+#model test
+
+test_t = np.array([0.5])
+prediction = nn.FF(test_t)
+print("Predicted 24 joint angles:", prediction)

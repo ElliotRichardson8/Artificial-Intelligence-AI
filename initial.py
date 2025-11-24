@@ -24,5 +24,5 @@ def initial_population(pop_size, join_limits):
     return np.array([generate_chromosome(joint_limits) for x in range (pop_size)])
 
 #test initial population
-population = initial_population(50, joint_limits)
+population = initial_population(50, joint_limits=joint_limits)
 print(population[1])

@@ -111,7 +111,7 @@ for x in range(24):
 #creating and training the neural network
 nn = Full_NN(1, [32], 24)
 
-losses = nn.train_nn(t, Y, 2000, 0.02)
+losses = nn.train_nn(t, Y, 2000, 0.01)
 
 #plot training loss
 plt.plot(losses)

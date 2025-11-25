@@ -1,10 +1,18 @@
 -------- Neural Network Architecture --------
-
+Within our Neural Network, we created a feed-forward network because the task only requires us to map one input value to 24 output joint angles, so no advanced architectures are needed.
+We have one hidden layers with 32 neurons. We tested a combination of 32 or 64 neurons, with 2/3 hidden layers, and we found this to be the most stable, and is enough to learn the smooth sinusoidal patterns while keeping the network easy to train.
+However, we understand that using more layers or neurons could reduce prediction errors, but it would also slow down training, and we could not recreate a stable network with them.
 
 -------- Activation Functions and Loss Functions --------
-
+For our activation function, we chose to use tanh activation, as it produces outputs between -1 and +1, like the sine waves it is trying to learn. It works well for smooth, oscilating signals and helps the model learn the sinusoidal gait pattern.
+We also used Mean Squared Error for our loss fuction. This is because the task is a regression problem, and MSE is often used for these problems because it's mathematically convenient and has a differentiable loss function, which is ideal for gradient descent.
+Whilst ReLU would train faster, it does not nat
 
 -------- Training Method & Learning Rate --------
-
+For our training method, we chose to use standard gradient descent.
+Additionally, we have also used a learning rate of 0.01, as it provides stable but sufficiently fast convergence for our chosen architecture. We tested ranges from 0.01 - 0.0001, and found 0.01 to produce the best results. We also tested larger learning rates, but found that whilst it made training faster, it also produced unstable behaviour
+We chose to train over 2000 epochs, as we found the loss decrease is minimal when past this amount.
+We could also have used different optimisers, such as Adam, to improve convergence. 
 
 -------- Input/Output Format --------
+2

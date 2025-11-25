@@ -91,11 +91,10 @@ def evaluate_fitness(angles: [float], previous: [float]):
     return fitness
 
 
-def evaluate_population_fitness(population, previous_population):
+def evaluate_population_fitness(population, previous_fitest):
     fitnesses = []
-    #for individual in population:
-    #    print('individual', individual)
-    #    print('population', population)
-    #    print('population[0]', population[0])
-    #    return evaluate_fitness(individual, population[0]) # Using first individual as previous state
-    return evaluate_fitness(population, previous_population)
+    for individual in population:
+        fitnesses.append(evaluate_fitness(individual, previous_fitest))
+    return fitnesses
+    #return evaluate_fitness(individual, previous_fitest) # Using first individual as previous state
+    #return evaluate_fitness(population, previous_population)

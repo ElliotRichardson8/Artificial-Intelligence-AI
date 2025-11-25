@@ -25,7 +25,7 @@ def generate_population(parent1, parent2, pop_size):
 
 def main():
     population = []
-    # start with 1 individual and mutate for gen 2 then do crossover+mutatuion for gen 3-300
+    # start with 1 individual and mutate for gen 2 then do crossover+mutatuion for rest
     individual = initial.initial_population(1, initial.joint_limits)
     chromosomes.append(individual[0])
     population.append(individual[0])
@@ -39,9 +39,10 @@ def main():
         for child in offspring:
             mutated_child = mutation.random_resetting_mutation(child, mutation_rate, -np.pi/2, np.pi/2)
             population.append(mutated_child)
-    print(f"Initial Population Size: {len(population)}")
-
-    '''loop for 298 generations
+    if len(population) >= pop_size:
+            population = population[:pop_size] # ensure population size is maintained
+        
+    '''loop for remaining generations
     evaluate fitness
     select fittest individual and add to chromosomes
     perform crossover to produce offspring
@@ -51,8 +52,9 @@ def main():
     for generation in range(1, generations):
         gen_fitness_scores = []
         for pop in range(len(population)):
-            fitness_score = fitness.evaluate_population_fitness(population[pop], population[pop-1])
+            fitness_score = fitness.evaluate_population_fitness(population[pop], chromosomes[generation-1])
             gen_fitness_scores.append(fitness_score)
+        
         all_fitness_scores.append(gen_fitness_scores)
         fittest_individual = selection.tournament_selection_population(population, gen_fitness_scores, 1)[0]
         chromosomes.append(fittest_individual)
@@ -68,7 +70,7 @@ def main():
                 population.append(mutated_child)
         if len(population) >= pop_size:
             population = population[:pop_size] # ensure population size is maintained
-        print(f"End of Generation {generation} Population Size: {len(population)}")
+        print(f"End of Generation {generation+1} Population Size: {len(population)}, Fittest Individual Fitness: {max(gen_fitness_scores)}")
 
     # visualize fittest individual from each generation
     #for angles in chromosomes:

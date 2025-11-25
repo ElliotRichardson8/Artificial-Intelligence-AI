@@ -15,4 +15,3 @@ We chose to train over 2000 epochs, as we found the loss decrease is minimal whe
 We could also have used different optimisers, such as Adam, to improve convergence. 
 
 -------- Input/Output Format --------
-2

@@ -97,6 +97,10 @@ class Full_NN(object):
         msq = np.average((t-output) ** 2)
         return msq
     
+    #model save
+    def save(self,filename):
+        np.savez(filename, *self.W)
+    
 
 #Generate Training Data (sinusoidal gait)
 samples = 500
@@ -139,3 +143,7 @@ test_t = np.array([0.5])
 prediction = nn.FF(test_t)
 print("Predicted 24 joint angles:", prediction)
 pt.plot_spider_pose(prediction)
+
+
+#save model
+nn.save("trained_spider_model.npz")

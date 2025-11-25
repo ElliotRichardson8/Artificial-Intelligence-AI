@@ -16,8 +16,8 @@ BASE_ANGLES = np.deg2rad([45, 75, 105, 135, -135, -105, -75, -45])
 assert len(BASE_ANGLES) == N_LEGS
 
 # Pre-calculate base positions because they don't change
-BASE_POSITIONS = [(A * np.cos(angle), B * np.sin(angle), 0)
-                  for angle in BASE_ANGLES]
+BASE_POSITIONS = np.array([(A * np.cos(angle), B * np.sin(angle), 0)
+                  for angle in BASE_ANGLES])
 
 # Angle between coxa and XY plane
 COXA_PITCH = np.deg2rad(30)
@@ -34,13 +34,18 @@ def calculate_joint_positions(leg_index, joint_angles):
         [coxa_yaw, femur_pitch, tibia_pitch] joint angles for the leg in radians
     """
     # TODO validate input maybe
+    if np.shape(joint_angles) != (3,):
+        raise ValueError(f"Wrong shaped input. \n{joint_angles = }"
+        "\n is expected to have shape (3,). "
+        f"Instead it has shape {np.shape(joint_angles)}")
 
     base_angle = BASE_ANGLES[leg_index]
     base_pos = BASE_POSITIONS[leg_index]
 
     # Initialise array of joint positions.
     # Initially only includes where the coxa meets the body
-    joints = [base_pos]
+    joints = np.zeros(shape=(4, 3))
+    joints[0] = base_pos
 
     # Initialise the "direction"
     # Initially the horizontal direction of leg in XY plane as a unit vector
@@ -60,7 +65,7 @@ def calculate_joint_positions(leg_index, joint_angles):
     for i in range(3):
         rot_axis = np.cross(direction, Z_AXIS)
         direction = rotate_vector(direction, rot_axis, joint_angles[i])
-        joints.append(joints[i] + direction * SEGMENT_LENGTHS[i])
+        joints[i+1] = joints[i] + direction * SEGMENT_LENGTHS[i]
 
     return joints
 

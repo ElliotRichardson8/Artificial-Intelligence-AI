@@ -1,4 +1,5 @@
 import random
+import numpy as np
 
 def affirm_suitability(population, fitnesses):
     """Raises an error if these inputs are unsuitable for selection"""
@@ -27,30 +28,32 @@ def tournament_selection_individual(population, fitnesses, x=2):
         raise ValueError(f"Value for x must be greater than 1\n Received {x}")
 
     # Select indexes corresponding to x different individuals
-    candidates = [random.randint(len(population)) for i in range(x)]
+    candidates = [random.randint(0, len(population)-1) for i in range(x)]
 
     fittest_candidate = 0
     greatest_fitness = fitnesses[0]
 
     for candidate in candidates:
-        if fitnesses[candidates] > greatest_fitness:
-            greatest_fitness = fittnesses(candidate)
+        if fitnesses[candidate] > greatest_fitness:
+            greatest_fitness = fitnesses[candidate]
             fittest_candidate = candidate
 
-    return population[fittest_index]
+    return population[fittest_candidate]
 
 # TODO test this
-def tournament_selection_population(population, fitnesses: [int], n: int, x=2):
+def tournament_selection_population(population, fitnesses: [int], n=-1, x=2):
     """Performs x-way tournament selection until n individuals are selected"""
+
+    # Select a parent population of equal size to initial population if n is unset
+    if n == -1:
+        n = len(population)
 
     affirm_suitability(population, fitnesses)
 
-    parents = []
+    parents = np.zeros(shape=(len(population), 8, 3))
     for i in range(n):
-        parents.append(
-            tournament_selection_individual(population, fitnesses, x)
-        )
-
+        parents[i] = tournament_selection_individual(population, fitnesses, x)
+        
     return parents
 
 # TODO test this

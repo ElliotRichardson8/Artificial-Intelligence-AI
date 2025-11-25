@@ -7,16 +7,17 @@ import kinematics
 
 N_LEGS = kinematics.N_LEGS
 N_SEGMENTS = kinematics.N_SEGMENTS
+PROPER_SHAPE = (N_LEGS, N_SEGMENTS)
 
 LEG_LABELS = ("L1", "L2", "L3", "L4", "R4", "R3", "R2", "R1")
 assert len(LEG_LABELS) == N_LEGS
 
 # Main function ---------------------------------------------------------------
-def plot_spider_pose(angles):
+def plot_spider_pose(angles, ax: plt.Axes):
     """Plot a static 3D spider pose based on joint angles
 
     Input:
-        angles: 1x24 vector of joint angles in radians
+        angles: 8x3 vector of joint angles in radians
 
     There are 8 legs with 3 angles each. 
     The segments of the leg are coxa, femur, tibia 
@@ -31,18 +32,14 @@ def plot_spider_pose(angles):
     # "left" is the spider's left, not the observer's left
 
     # Validate input
-    if angles.size != N_LEGS * N_SEGMENTS:
-        raise ValueError(
-            f"Input angles must be a 1x{len(N_LEGS)*N_SEGMENTS} vector."
-            f"({N_SEGMENTS} angles per leg for {N_LEGS} legs.)")
 
-    # Create figure
-    fig = plt.figure()
-    # Add 3 dimensional axes
-    ax = fig.add_subplot(projection="3d")
+    if np.shape(angles) != PROPER_SHAPE:
+        raise ValueError(f"Shape of `angles` must be {PROPER_SHAPE}.\n"
+            f"Instead received an object of shape {np.shape(angles)}.\n"
+            f"{angles = }")
 
     for i in range(N_LEGS):
-        joints = kinematics.calculate_joint_positions(i, angles[i*3:i*3+3])
+        joints = kinematics.calculate_joint_positions(i, angles[i])
 
         # Plot legs -----------------------------------------------------------
 
@@ -83,5 +80,14 @@ def plot_spider_pose(angles):
     ax.view_init(45, -45)
 
     ax.set_aspect("equal")
+
+def show_spider_pose(angles):
+    fig = plt.figure()
+    ax = fig.add_subplot(projection="3d")
+    plot_spider_pose(angles, ax)
     plt.show()
 
+
+def test():
+    ones = np.ones((8,3))
+    show_spider_pose(ones)

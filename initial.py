@@ -11,18 +11,25 @@ joint_limits = [
     (-1.57, 1.57) # tibia
 ]
 
-def generate_chromosome(joint_limits):
-    chromosome = []
-    for i in range(8):
-        for j in range(3):
-            low, high = joint_limits[j]
+def generate_chromosome(joint_limits=joint_limits):
+    chromosome = np.zeros(shape=(8, 3))
+    for leg in range(8):
+        for segment in range(3):
+            low, high = joint_limits[segment]
             angle = np.random.uniform(low, high)
-            chromosome.append(angle)
-    return np.array(chromosome)
+            chromosome[leg, segment] = angle
 
-def initial_population(pop_size, join_limits):
-    return np.array([generate_chromosome(joint_limits) for x in range (pop_size)])
+    return chromosome
 
-#test initial population
-population = initial_population(50, joint_limits=joint_limits)
-print(population[1])
+# TODO have these constants not be hardcoded
+def initial_population(pop_size, joint_limits=joint_limits):
+    population = np.zeros(shape=(pop_size, 8, 3))
+    for i, individual in enumerate(population):
+        population[i] = generate_chromosome(joint_limits)
+
+    return population
+
+
+def test():
+    population = initial_population(50, joint_limits)
+    print(population[1])

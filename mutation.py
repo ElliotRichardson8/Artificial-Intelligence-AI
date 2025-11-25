@@ -1,6 +1,7 @@
 import random
+from numpy import pi
 
-def random_resetting_mutation(chromo, mutation_rate=0.01, lower=0, upper=1):
+def random_resetting_mutation(chromo, mutation_rate=0.01, lower=-pi, upper=pi):
     """
     Peforms random resetting mutation on a floating-point chromosome
     """
@@ -11,9 +12,11 @@ def random_resetting_mutation(chromo, mutation_rate=0.01, lower=0, upper=1):
 
     return chromo
 
-def mutate_population(population, mutation_rate=0.01, lower=0.1, upper=1):
+def mutate_population(population, mutation_rate=0.01, lower=-pi, upper=pi):
     for i in range(len(population)):
         population[i] = random_resetting_mutation(population[i])
+
+    return population
 
 #test mutation
 def test():

@@ -9,46 +9,57 @@ def single_pose_fitness(chromosome) -> float:
     angles = np.reshape(chromosome, (8, 3))
 
     # Initialise joints
-    all_joints = []
+    all_joints = np.zeros(shape=(8, 4, 3))
     for i, leg_angles in enumerate(angles):
-        all_joints.append(kinematics.calculate_joint_positions(i, leg_angles))
+        all_joints[i] = kinematics.calculate_joint_positions(i, leg_angles)
+
+
+    foot_height_reward = 0
+    foot_distance_reward = 0
+    leg_crossover_reward = 0
+
+    foot_height_weight = 30
+    foot_distance_weight = 1
+    leg_crossover_weight = 20
+
+    for leg_joints in all_joints:
+
+        # Ensure legs don't intersect body
+        # Ignore first joint because position of coxa on body is irrelevant
+        if legs_intersect_body(leg_joints[1:]):
+            return 0
+
+        # Reward spider for feet being low down -------------------------------
+        foot_height_reward -= leg_joints[-1, 2]
+        # Subtracting the z position of the foot encourages
+        # the foot to have a low z value
+
+        # Reward spider for feet being far from body --------------------------
+        foot_x, foot_y = leg_joints[-1, 0:2]
+        foot_distance_reward += (kinematics.B * foot_x)**2 + (kinematics.A * foot_y)**2
+        # Could use sqrt to find a more accurate representation of distance
+        # But it would be a lot slower
+
+
+    # Punish spider for legs crossing over ------------------------------------
+    for i in range(3):
+        if all_joints[i, -1, 0] < all_joints[i+1, -1, 0]:
+            leg_crossover_reward -= 1
+
+    for i in range(4,7):
+        if all_joints[i, -1, 0] > all_joints[i+1, -1, 0]:
+            leg_crossover_reward -= 1
+
+    # Calculate and combine rewards
+    return (
+        foot_height_reward * foot_height_weight
+        + foot_distance_reward * foot_distance_weight
+        + leg_crossover_reward * leg_crossover_weight
+    )
     
-    # Initialise fitness; we will modify this value henceforth
-    fitness = 0
 
 
-    # Legs don't intersect body
-    if legs_intersect_body(joints):
-        # Legs intersecting body is impossible; return a very bad fitness
-        return -10000
 
-    # Reward spider for having feet below the body
-    for joints in all_joints:
-        foot = joints[-1]
-
-        # Subtract the z position of the foot
-        # This encourages spider to have negative z position on feet
-        # i.e. have its feet be below the body
-        fitness -= foot[2]
-
-    # Reward for having feet be the lowest joint
-    # (technically just punishes for having feet not be the lowest joint)
-    for joints in all_joints:
-        lowest = 0
-        for joint in joints:
-            lowest = min(lowest, joint[2])
-
-        foot = joints[-1]
-        # If lowest joint is not foot, "lowest" will be lesser than foot[2]
-        # Punish proportional to the distance between foot and lowest joint
-        fitness -= foot[2] - lowest
-
-    # Operations on footprint
-
-    # Footprint 
-
-    
-    return fitness
     
 def legs_intersect_body(joints):
     """Checks if any of the legs intersect the body.
@@ -104,8 +115,6 @@ def point_inside_ellipse(x, y, a, b):
 
     # Pretty sure this works
     return (x**2)/(a**2) + (y**2)/(b**2) <= 1
-
-single_pose_fitness(np.ones(24))
 
 def footprint_area(foot1, foot2, foot3):
     """Uses trigonometry to find footprint area"""

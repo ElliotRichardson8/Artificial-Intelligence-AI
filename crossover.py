@@ -1,31 +1,29 @@
-from random import randint
+import random
+import numpy as np
 
-def sp_crossover(parent1, parent2):
-    """Performs single-point crossover to produce 2 offspring.
+def uniform_crossover(parent1, parent2):
+    """Performs uniform crossover, returns a single child
+    Each parent is an array of dimensions 8*3"""
+    child = parent1
+    for i in range(len(parent1)):
+        for j in range(len(parent1[i])):
+            # 50% chance to write parent2's gene. Otherwise, parent1's gene is inherited
+            if random.random() > 0.5:
+                child[i, j] = parent2[i, j]
 
-Requires that the parents have equal length chromosomes"""
+    return child
 
-    if len(parent1) != len(parent2):
-        raise ValueError("Parents must have equal length chromosomes")
+def uniform_crossover_population(parents):
+    """Performs uniform crossover on a population of parents to produce a
+    population of offspring, of equal size."""
+    offspring = np.zeros(shape=(len(parents), 8, 3))
 
-    crossover_point = randint(0, len(parent1))
-    offspring1 = parent1[0:i] + parent2[i:]
-    offspring2 = parent2[0:i] + parent1[i:]
+    # This gives us an offspring population 1 less than the parent population
+    # Every parent produces 2 offspring except the first and last
+    for i in range(len(parents) - 1):
+        offspring[i] = uniform_crossover(parents[i], parents[i+1])
 
-    return [offspring1, offspring2]
-    
-
-def sp_crossover_pop(parents):
-    """Performs single-point crossover on a population of parents to produce 
-a population of offspring of equal size.
-
-If an odd number of parents are given, then the last parent is directly 
-carried over."""
-    offspring = []
-    for i in range(0, len(parents) - 1, 2):
-        offspring += sp_crossover(parents[i], parents[i+1])
-
-    if len(parents) % 2 == 1:
-        offspring.append(parents[-1])
-
+    # For the final offspring, crossover the first and last parent
+    # to give them 2 offspring each
+    offspring[-1] = uniform_crossover(parents[0], parents[-1])
     return offspring

@@ -6,7 +6,8 @@ However, we understand that using more layers or neurons could reduce prediction
 -------- Activation Functions and Loss Functions --------
 For our activation function, we chose to use tanh activation, as it produces outputs between -1 and +1, like the sine waves it is trying to learn. It works well for smooth, oscilating signals and helps the model learn the sinusoidal gait pattern.
 We also used Mean Squared Error for our loss fuction. This is because the task is a regression problem, and MSE is often used for these problems because it's mathematically convenient and has a differentiable loss function, which is ideal for gradient descent.
-Whilst ReLU would train faster, it does not nat
+Whilst ReLU would train faster, it does not match sinusoidal patterns as well as tanh. In addition to this, we could have used MAE, which is less sensitive to outliers, but does not give as smoother gradients as MSE.
+Sigmoid could not have been used for this as it would restrict the output range.
 
 -------- Training Method & Learning Rate --------
 For our training method, we chose to use standard gradient descent.
@@ -14,4 +15,12 @@ Additionally, we have also used a learning rate of 0.01, as it provides stable b
 We chose to train over 2000 epochs, as we found the loss decrease is minimal when past this amount.
 We could also have used different optimisers, such as Adam, to improve convergence. 
 
+-------- Training Data --------
+The training data consists of 500 evenly spaced time samples between 1 and 0, representing one full gait cycle, giving the netowrk enough data to learn smooth patterns.
+The dataset is generated using sinusoidal functions, to match the sinusoidal gait that it represents. This was chosesn to ensure smooth continous joint motion, which is essential for plausable gait patterns.
+Whilst we could have used data from our genetic algorithm to potentially produce more realistic results, there is no guarantee of smoothness in this data, and may produce jerky movements.
+
 -------- Input/Output Format --------
+The input is t, a number between 0 and 1, which represents the progress through a single walking cycle.
+The output is a 24 element vector to represent the 24 joint angles of the spider.
+

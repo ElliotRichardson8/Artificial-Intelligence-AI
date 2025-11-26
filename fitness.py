@@ -187,7 +187,7 @@ class CompoundFitnessEvaluator:
             + angle_stability_reward * angle_stability_weight
         )    
         
-    
+         
 def legs_intersect_body(joints):
     """Checks if any of the legs intersect the body.
     Returns True if so, False if not"""
@@ -224,3 +224,21 @@ def legs_intersect_body(joints):
     # No legs intersect body; return False
     return False
 
+
+def point_inside_ellipse(x, y, a, b):
+    """Returns a boolean corresponding to if point (x, y)
+    lies inside an ellipse with major axis `a` and minor axis `b`
+    (where a is aligned with the x axis and b is aligned with the y axis)
+    
+    Assumes the ellipse is centered on (0, 0)"""
+
+    # Optimisations. If either ordinate lies outside the extrema
+    # of the ellipse, the coordinate can be rejected
+    if x > a:
+        return False
+
+    if y > b:
+        return False
+
+    # Pretty sure this works
+    return (x**2)/(a**2) + (y**2)/(b**2) <= 1

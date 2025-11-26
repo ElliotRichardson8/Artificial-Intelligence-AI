@@ -61,13 +61,49 @@ def calculate_joint_positions(leg_index, joint_angles):
     joint_angles = list(joint_angles)
     joint_angles[0] = COXA_PITCH
 
+    rot_axis = np.cross(direction, Z_AXIS)
     # Main loop
     for i in range(3):
-        rot_axis = np.cross(direction, Z_AXIS)
         direction = rotate_vector(direction, rot_axis, joint_angles[i])
         joints[i+1] = joints[i] + direction * SEGMENT_LENGTHS[i]
 
     return joints
+
+# This is supposed to be a much more efficient implementation
+# But I've got an hour and a half till the extended deadline. 
+# Well, shit.
+def calculate_joint_positions2(leg_index, joint_angles):
+    assert np.shape(joint_angles) == (3,)
+
+    base_angle = BASE_ANGLES[leg_index]
+    base_pos = BASE_POSITIONS[leg_index]
+
+    joints = np.zeros(shape=(4,3))
+    joints[0] = base_pos
+
+    xy_angle = base_angle + joint_angles[0]
+    x_scale_factor = np.cos(xy_angle)
+    y_scale_factor = np.sin(xy_angle)
+    print(x_scale_factor)
+    print(y_scale_factor)
+
+    z_angle = 0
+    joint_angles[0] = COXA_PITCH
+
+    for i, length in enumerate(SEGMENT_LENGTHS):
+        z_angle += joint_angles[i]
+        delta_z = length * np.sin(z_angle)
+
+        xy_length = length * np.cos(z_angle)
+        delta_x = xy_length * x_scale_factor
+        delta_y = xy_length * y_scale_factor
+
+        print(np.array([delta_x, delta_y, delta_z]))
+
+        joints[i+1] = joints[i] + np.array([delta_x, delta_y, delta_z])
+
+    return joints
+
 
 def axis_angle_rotation_matrix(axis, angle):
     """Returns a rotation matrix corresponding to a rotation about the given axis by the given angle."""

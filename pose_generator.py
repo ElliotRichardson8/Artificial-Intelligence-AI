@@ -22,7 +22,7 @@ class PoseGenerator:
         self.mutation_rate = mutation_rate
 
         self.population = initial.initial_population(population_size)
-        self.fitnesses = self.evaluate_fitnesses(self.population)
+        self.evaluate_fitnesses()
 
         self.tracking_percentiles = tracking_percentiles
         self.recorded_fitnesses = np.zeros(shape=(len(tracking_percentiles),0))
@@ -35,7 +35,7 @@ class PoseGenerator:
         for i in range(self.population_size):
             fitnesses[i] = fitness.static_fitness_angles(self.population[i])
 
-        return fitnesses
+        self.fitnesses = fitnesses
 
     def perform_generation(self):
         parents = selection.tournament_selection_population(
@@ -47,7 +47,7 @@ class PoseGenerator:
             self.mutation_rate)
 
         self.generation += 1
-        self.fitnesses = evaluate_fitnesses(self.population)
+        self.evaluate_fitnesses()
 
         generation_entries = np.zeros((len(self.tracking_percentiles),1))
 
@@ -122,7 +122,6 @@ class PoseGenerator:
         plt.show()
 
 class PoseGeneratorDynamic(PoseGenerator):
-    @overwrite
     def __init__(
         self,
         previous_pose,
@@ -131,15 +130,14 @@ class PoseGeneratorDynamic(PoseGenerator):
         tracking_percentiles=DEFAULT_TRACKING_PERCENTILES
     ):
         self.previous_pose = previous_pose
+        self.fitness_evaluator = fitness.CompoundFitnessEvaluator(previous_pose)
         super().__init__(population_size, mutation_rate, tracking_percentiles)
         
-    @overwrite
     def evaluate_fitnesses(self):
         fitnesses = np.zeros(self.population_size)
         for i in range(self.population_size):
-            fitnesses[i] = fitness.compound_fitness(
-                self.previous_pose, 
+            fitnesses[i] = self.fitness_evaluator.evaluate_fitness(
                 self.population[i]
             )
 
-        return fitnesses
+        self.fitnesses = fitnesses

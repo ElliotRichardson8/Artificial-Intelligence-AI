@@ -128,7 +128,7 @@ for t in [0.0, 0.25, 0.5, 0.75, 1.0]:
 test_t = np.array([0.5])
 prediction = nn.FF(test_t)
 print("Predicted 24 joint angles:", prediction)
-pt.plot_spider_pose(prediction)
+pt.show_spider_pose(prediction)
 
 
 #save model

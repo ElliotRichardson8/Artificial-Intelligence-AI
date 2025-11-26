@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 DEFAULT_GENERATIONS = 50
-POPULATION_SIZE = 50
+DEFAULT_POPULATION_SIZE = 50
 DEFAULT_MUTATION_RATE = 0.01
 DEFAULT_TRACKING_PERCENTILES = np.array([100, 75, 50, 25])
 
@@ -17,10 +17,10 @@ def evaluate_fitnesses(population):
 
     return fitnesses
 
-class Genetic_Algorithm:
+class PoseGenerator:
     def __init__(
         self,
-        population_size: int,
+        population_size=DEFAULT_POPULATION_SIZE,
         mutation_rate=DEFAULT_MUTATION_RATE,
         tracking_percentiles=DEFAULT_TRACKING_PERCENTILES
     ):
@@ -76,13 +76,21 @@ class Genetic_Algorithm:
 
         return fittest_individual_index
 
-    def plot_fittest(self, ax):
-        index = ga.fittest_individual()
-        angles = self.population[index]
-        fitness = self.fitnesses[index]
-        plot_spider_pose.plot_spider_pose(angles, ax)
+    def get_fittest(self):
+        index = self.fittest_individual()
+        return (self.fitnesses[index], self.population[index])
 
-    def plot_generational_progression(self, ax):
+    def print_fittest(self):
+        fitness, angles = self.get_fittest()
+        print(f"Fitness = {fitness}")
+        print(angles)
+
+    def plot_fittest(self, ax: plt.Axes):
+        fitness, angles = self.get_fittest()
+        plot_spider_pose.plot_spider_pose(angles, ax)
+        ax.set_title(f"Fitness = {fitness}")
+
+    def plot_generational_progression(self, ax: plt.Axes):
         for i in range(len(self.tracking_percentiles)):
             ax.plot(range(self.generation), self.recorded_fitnesses[i], label=i)
 
@@ -110,6 +118,3 @@ class Genetic_Algorithm:
         self.plot_fittest(ax1)
         self.plot_generational_progression(ax2)
         plt.show()
-
-ga = Genetic_Algorithm(POPULATION_SIZE)
-ga.perform_generations(DEFAULT_GENERATIONS)

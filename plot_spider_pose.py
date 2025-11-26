@@ -87,6 +87,12 @@ def show_spider_pose(angles):
     plot_spider_pose(angles, ax)
     plt.show()
 
+def save_spider_pose(angles, filepath):
+    fig = plt.figure()
+    ax = fig.add_subplot(projection="3d")
+    plot_spider_pose(angles, ax)
+    fig.savefig(filepath)
+    plt.close()
 
 def test():
     ones = np.ones((8,3))

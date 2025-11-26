@@ -11,3 +11,4 @@ __pycache__/genetic_algorithm.cpython-313.pyc
 __pycache__/pose_generator.cpython-313.pyc
 __pycache__/plot_spider_pose.cpython-313.pyc
 __pycache__/selection.cpython-313.pyc
+trained_spider_model.npz

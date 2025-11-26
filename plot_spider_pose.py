@@ -7,7 +7,6 @@ import kinematics
 
 N_LEGS = kinematics.N_LEGS
 N_SEGMENTS = kinematics.N_SEGMENTS
-PROPER_SHAPE = (N_LEGS, N_SEGMENTS)
 
 LEG_LABELS = ("L1", "L2", "L3", "L4", "R4", "R3", "R2", "R1")
 assert len(LEG_LABELS) == N_LEGS
@@ -32,11 +31,11 @@ def plot_spider_pose(angles, ax: plt.Axes):
     # "left" is the spider's left, not the observer's left
 
     # Validate input
-
-    if np.shape(angles) != PROPER_SHAPE:
-        raise ValueError(f"Shape of `angles` must be {PROPER_SHAPE}.\n"
-            f"Instead received an object of shape {np.shape(angles)}.\n"
-            f"{angles = }")
+    try:
+        angles = np.reshape(angles, (8,3))
+    except ValueError as E:
+        print("Attempted to reshape input to shape (8,3). Error encountered:")
+        raise E
 
     for i in range(N_LEGS):
         joints = kinematics.calculate_joint_positions(i, angles[i])

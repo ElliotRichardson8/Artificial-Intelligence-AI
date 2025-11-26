@@ -1,0 +1,26 @@
+# Required Software
+- matplotlib
+- numpy
+- python-opencv
+
+# Set up
+Install the Required packages (i.e. using pip or a package manager of your choice.)
+
+# Running the code
+
+As the coursework is in two parts, there are two pieces of code to run.
+
+## Part 1: Genetic Algorithm
+
+
+## Part 2: Neural Network
+To run the Nueral Network code, execute the file `spider_joint_NN.py` (using an interpreter of your choice).
+(Personally I've been alternating between IDLE and ipython in interactive mode).
+
+The program will generate training data,
+create and train the nueral network,
+plot the training loss curve,
+(then, after that figure has been closed) plot (in sequence) the predicted & target joint angles for different times along the gait cycle.
+Then, a test of the 
+
+# Inputs, Outputs, Usage Examples

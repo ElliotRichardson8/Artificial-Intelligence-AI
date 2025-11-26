@@ -10,13 +10,6 @@ DEFAULT_POPULATION_SIZE = 50
 DEFAULT_MUTATION_RATE = 0.01
 DEFAULT_TRACKING_PERCENTILES = np.array([100, 75, 50, 25])
 
-def evaluate_fitnesses(population):
-    fitnesses = np.zeros(len(population))
-    for i in range(len(population)):
-        fitnesses[i] = fitness.single_pose_fitness(population[i])
-
-    return fitnesses
-
 class PoseGenerator:
     def __init__(
         self,
@@ -29,13 +22,20 @@ class PoseGenerator:
         self.mutation_rate = mutation_rate
 
         self.population = initial.initial_population(population_size)
-        self.fitnesses = evaluate_fitnesses(self.population)
+        self.fitnesses = self.evaluate_fitnesses(self.population)
 
         self.tracking_percentiles = tracking_percentiles
         self.recorded_fitnesses = np.zeros(shape=(len(tracking_percentiles),0))
 
     def set_mutation_rate(self, mutation_rate):
         self.mutation_rate = mutation_rate
+
+    def evaluate_fitnesses(self):
+        fitnesses = np.zeros(self.population_size)
+        for i in range(self.population_size):
+            fitnesses[i] = fitness.static_fitness_angles(self.population[i])
+
+        return fitnesses
 
     def perform_generation(self):
         parents = selection.tournament_selection_population(
@@ -77,16 +77,18 @@ class PoseGenerator:
         return fittest_individual_index
 
     def get_fittest(self):
+        """Returns a tuple of (chromosome, fitness)
+        For the fittest individual in the population."""
         index = self.fittest_individual()
-        return (self.fitnesses[index], self.population[index])
+        return (self.population[index] , self.fitnesses[index])
 
     def print_fittest(self):
-        fitness, angles = self.get_fittest()
+        angles, fitness = self.get_fittest()
         print(f"Fitness = {fitness}")
         print(angles)
 
     def plot_fittest(self, ax: plt.Axes):
-        fitness, angles = self.get_fittest()
+        angles, fitness = self.get_fittest()
         plot_spider_pose.plot_spider_pose(angles, ax)
         ax.set_title(f"Fitness = {fitness}")
 
@@ -118,3 +120,26 @@ class PoseGenerator:
         self.plot_fittest(ax1)
         self.plot_generational_progression(ax2)
         plt.show()
+
+class PoseGeneratorDynamic(PoseGenerator):
+    @overwrite
+    def __init__(
+        self,
+        previous_pose,
+        population_size=DEFAULT_POPULATION_SIZE,
+        mutation_rate=DEFAULT_MUTATION_RATE,
+        tracking_percentiles=DEFAULT_TRACKING_PERCENTILES
+    ):
+        self.previous_pose = previous_pose
+        super().__init__(population_size, mutation_rate, tracking_percentiles)
+        
+    @overwrite
+    def evaluate_fitnesses(self):
+        fitnesses = np.zeros(self.population_size)
+        for i in range(self.population_size):
+            fitnesses[i] = fitness.compound_fitness(
+                self.previous_pose, 
+                self.population[i]
+            )
+
+        return fitnesses

@@ -72,20 +72,6 @@ class Full_NN(object):
             W = self.W[x]
             Der = self.Der[x]
             W += Der * lr
-
-    def sigmoid(self, x): #sigmoid activation method
-        y= 1.0 / (1 + np.exp(-x))
-        return y
-    
-    def sigmoid_Der(self, x): #sigmoid method derivative
-        sig_der = x * (1.0 - x)
-        return sig_der
-    
-    def relu(self, x): #reLU activation method
-        return np.maximum(0,x)
-    
-    def relu_Der(self, x): #reLU derivative method
-        return (x > 0).astype(float)
     
     def tanh(self, x): #tanh activation method
         return np.tanh(x)

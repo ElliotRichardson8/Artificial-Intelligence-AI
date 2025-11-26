@@ -1,0 +1,11 @@
+__pycache__/crossover.cpython-313.pyc
+__pycache__/discombobulate.cpython-313.pyc
+__pycache__/fitness.cpython-313.pyc
+__pycache__/general.cpython-313.pyc
+__pycache__/initial.cpython-313.pyc
+__pycache__/kinematics.cpython-313.pyc
+__pycache__/mutation.cpython-313.pyc
+__pycache__/plot_spider_pose.cpython-313.pyc
+gait/
+__pycache__/genetic_algorithm.cpython-313.pyc
+__pycache__/pose_generator.cpython-313.pyc
